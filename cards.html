@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Infinite Smooth Cards</title>
+
+<style>
+body {
+  margin: 0;
+  background: #1e1e2f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Scene */
+.scene {
+  perspective: 1200px;
+}
+
+/* Container */
+.cards {
+  width: 360px;
+  height: 460px;
+  position: relative;
+}
+
+/* Card */
+.card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+
+  transform: translate3d(0,0,0);
+  will-change: transform;
+
+  transition: transform 0.3s ease, filter 0.3s, opacity 0.3s;
+  cursor: grab;
+  touch-action: none;
+}
+
+/* Hover */
+.card:hover {
+  transform: scale(1.04);
+}
+
+/* Dragging */
+.card.dragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+/* Stack positions */
+.card--current {
+  z-index: 10;
+}
+
+.card--next {
+  transform: translate3d(0,-20px,0) scale(0.95);
+  filter: blur(1px);
+  z-index: 5;
+}
+
+.card--back {
+  transform: translate3d(0,-40px,0) scale(0.9);
+  filter: blur(2px);
+  opacity: 0.6;
+  z-index: 1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+  <div class="cards">
+    <div class="card">Card 1</div>
+    <div class="card">Card 2</div>
+    <div class="card">Card 3</div>
+    <div class="card">Card 4</div>
+  </div>
+</div>
+
+<script>
+const container = document.querySelector('.cards');
+let cards = Array.from(document.querySelectorAll('.card'));
+
+/* Physics state */
+let state = {
+  x: 0,
+  v: 0,
+  target: 0,
+  dragging: false
+};
+
+let lastX = 0;
+let lastTime = 0;
+let velocityHistory = [];
+
+/* Physics constants */
+const SPRING = 0.08;
+const DAMPING = 0.85;
+
+/* Always get current top card */
+function topCard() {
+  return cards[0];
+}
+
+/* Update visual stack */
+function updateStack() {
+  cards.forEach((c, i) => {
+    c.classList.remove('card--current','card--next','card--back');
+
+    if (i === 0) c.classList.add('card--current');
+    else if (i === 1) c.classList.add('card--next');
+    else c.classList.add('card--back');
+
+    c.style.transition = '';
+  });
+}
+
+/* Apply transforms */
+function applyTransforms() {
+  cards.forEach((card, i) => {
+    let depth = i;
+
+    let offsetX = state.x * (1 - depth * 0.15);
+    let scale = 1 - depth * 0.05;
+    let y = -depth * 20;
+    let tilt = state.v * 0.4;
+
+    card.style.transform =
+      `translate3d(${offsetX}px, ${y}px, 0)
+       scale(${scale})
+       rotate(${offsetX * 0.05 + tilt}deg)`;
+
+    let shadowX = -offsetX * 0.2;
+    card.style.boxShadow =
+      `${shadowX}px 25px ${60 - depth * 10}px rgba(0,0,0,0.6)`;
+  });
+}
+
+/* Physics loop */
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (!state.dragging) {
+    let force = (state.target - state.x) * SPRING;
+    state.v = (state.v + force) * DAMPING;
+    state.x += state.v;
+
+    if (Math.abs(state.x) > 500) nextCard();
+  }
+
+  applyTransforms();
+}
+
+/* Move first card to back with animation */
+function nextCard() {
+  const first = cards[0];
+
+  /* STEP 1: animate exit */
+  first.style.transition = "transform 0.35s cubic-bezier(.2,.8,.2,1)";
+  first.style.transform =
+    `translate3d(${state.x > 0 ? 500 : -500}px,-80px,0) rotate(${state.x > 0 ? 15 : -15}deg)`;
+
+  /* STEP 2: after animation, reorder */
+  setTimeout(() => {
+
+    const moved = cards.shift();
+    container.appendChild(moved);
+    cards.push(moved);
+
+    /* reset physics */
+    state.x = 0;
+    state.v = 0;
+    state.target = 0;
+    velocityHistory = [];
+
+    /* reset transitions for smooth re-entry */
+    cards.forEach(c => {
+      c.style.transition =
+        "transform 0.5s cubic-bezier(.2,.9,.2,1), box-shadow 0.5s";
+    });
+
+    updateStack();
+
+    /* allow reflow then clear transforms for smooth settle */
+    requestAnimationFrame(() => {
+      cards.forEach(c => {
+        c.style.transform = "";
+      });
+    });
+
+  }, 300);
+}
+
+/* Haptic feedback */
+function haptic() {
+  if (navigator.vibrate) navigator.vibrate(10);
+}
+
+/* Pointer handling (delegated for stability) */
+container.addEventListener('pointerdown', (e) => {
+  const card = topCard();
+  if (!card.contains(e.target)) return;
+
+  state.dragging = true;
+  lastX = e.clientX;
+  lastTime = Date.now();
+
+  card.setPointerCapture(e.pointerId);
+});
+
+container.addEventListener('pointermove', (e) => {
+  if (!state.dragging) return;
+
+  let dx = e.clientX - lastX;
+  let now = Date.now();
+  let dt = now - lastTime || 16;
+
+  let velocity = dx / dt * 16;
+
+  velocityHistory.push(velocity);
+  if (velocityHistory.length > 8) velocityHistory.shift();
+
+  let resistance = dx * (1 - Math.min(Math.abs(state.x) / 200, 0.5));
+
+  state.x += resistance;
+  state.v = velocity;
+
+  lastX = e.clientX;
+  lastTime = now;
+});
+
+container.addEventListener('pointerup', () => {
+  if (!state.dragging) return;
+
+  state.dragging = false;
+
+  let predicted = velocityHistory.length
+    ? velocityHistory.reduce((a,b)=>a+b,0)/velocityHistory.length
+    : state.v;
+
+  if (Math.abs(state.x) > 120 || Math.abs(predicted) > 2) {
+    state.target = state.x > 0 ? 600 : -600;
+    state.v = predicted;
+    haptic();
+  } else {
+    state.target = 0;
+  }
+});
+
+/* Desktop click = swipe */
+container.addEventListener('click', (e) => {
+  const card = topCard();
+  if (!card.contains(e.target)) return;
+
+  if (state.dragging) return;
+
+  state.target = 600;
+  state.v = 25;
+  haptic();
+});
+
+/* Init */
+updateStack();
+animate();
+</script>
+
+</body>
+</html>
