@@ -195,6 +195,18 @@ body {
 .b .block-content__header { background: #1e88e5; }
 .y .block-content__header { background: #fdd835; }
 
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.actions .right {
+  margin-left: auto;
+}
+
 </style>
 </head>
 
@@ -204,19 +216,22 @@ body {
 
   <div class="project-title">Project</div>
 
-  <div class="block-col">
-    <div class="block r">
-      <div class="block-content">
-        <div class="block-content__header">
-          <h2 class="block-content__header__text">Red</h2>
+    <div class="block-col">
+      <div class="block r">
+        <div class="block-content">
+          <div class="block-content__header">
+            <h2 class="block-content__header__text">3D Space Shooter Game</h2>
+          </div>
+          <p class="block-content__body">
+HTML • CSS • JavaScript • Canvas — Interactive space shooter game featuring dynamic enemy waves, smooth player controls, real-time scoring, and immersive visual effects.
+          </p>
+          <div class="actions">
+            <div class="block-content__button back-btn">Back</div>
+            <a href="https://689486cd1339dc6fa0a6b044--super-malasada-1af979.netlify.app/" target="_blank" rel="noopener noreferrer" class="block-content__button right">Live Demo</a>
+          </div>
         </div>
-        <p class="block-content__body">
-          Red is the color at the end of the visible spectrum.
-        </p>
-        <div class="block-content__button">Neato</div>
       </div>
     </div>
-  </div>
 
   <div class="block-col">
     <div class="block b">
@@ -227,7 +242,10 @@ body {
         <p class="block-content__body">
           Blue lies between violet and green.
         </p>
-        <div class="block-content__button">Very Cool</div>
+        <div class="actions">
+          <div class="block-content__button back-btn">Back</div>
+          <div class="block-content__button right">Very Cool</div>
+        </div>
       </div>
     </div>
   </div>
@@ -241,7 +259,10 @@ body {
         <p class="block-content__body">
           Yellow sits between orange and green.
         </p>
-        <div class="block-content__button">Nice</div>
+        <div class="actions">
+          <div class="block-content__button back-btn">Back</div>
+          <div class="block-content__button right">Nice</div>
+        </div>
       </div>
     </div>
   </div>
@@ -255,7 +276,10 @@ body {
         <p class="block-content__body">
           Orange is a bright, energetic color between red and yellow.
         </p>
-        <div class="block-content__button">Awesome</div>
+        <div class="actions">
+          <div class="block-content__button back-btn">Back</div>
+          <div class="block-content__button right">Awesome</div>
+        </div>
       </div>
     </div>
   </div>
@@ -316,6 +340,15 @@ document.querySelectorAll(".block").forEach(block => {
     const transforms = getTransforms(inactive, active);
 
     animate(block, transforms, old);
+  });
+});
+document.querySelectorAll(".back-btn").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const active = document.querySelector(".block.block--active");
+    if (active) {
+      active.classList.remove("block--active");
+    }
   });
 });
 </script>
