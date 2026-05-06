@@ -37,6 +37,7 @@ body {
   margin: auto;
   padding-top: 40px;
 }
+
 .block-wrap::before {
   content: "";
   position: absolute;
@@ -81,11 +82,15 @@ body {
   border-radius: 50%;
   margin: auto 0;
   position: relative;
-  will-change: transform;
   transition: transform 0.185s cubic-bezier(0.4,0,0,1);
 }
 
 .block.block--active {
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
   border-radius: 20px;
 }
 
@@ -99,15 +104,6 @@ body {
 
 .block:not(.block--active):active {
   transform: scale(0.9) translateY(-12px);
-}
-
-.block--active {
-  position: absolute;
-  left: 0;
-  z-index: 1;
-  height: 100%;
-  width: 100%;
-  border-radius: 20px;
 }
 
 .block-content {
@@ -142,20 +138,47 @@ body {
   margin: 0 0 20px;
 }
 
+/* BUTTONS FIXED */
 .block-content__button {
   font-weight: bold;
-  background: rgba(255,255,255,.25);
+  background: #fff;
   display: inline-block;
   padding: 16px;
   border-radius: 4px;
-  color: rgba(255,255,255,.85);
+  color: #000;
   animation: button-in .245s forwards;
   animation-delay: .2s;
   opacity: 0;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  border: 1px solid rgba(0,0,0,0.08);
 }
 
-/* Animations */
+.block-content__button:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+}
+
+.block-content__button:active {
+  transform: scale(0.97);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.block-content__button.right {
+  background: #fff;
+  color: #000;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.back-btn {
+  background: #fff;
+  color: #000;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
 @keyframes content-in {
   0% { opacity: 0; transform: translateY(128px); }
   100% { opacity: 1; transform: translateY(0); }
@@ -166,102 +189,77 @@ body {
   100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Colors */
-.r {
-  background: #f44336;
-  color: #222;
-}
-
-.b {
-  background: #1e88e5;
-  color: #fff;
-}
-
-.y {
-  background: #fdd835;
-  color: #333;
-}
-
-.o {
-  background: #ff6f00;
-  color: #222;
-}
-
-.o .block-content__header {
-  background: #ff6f00;
-}
-
-.r .block-content__header { background: #f44336; }
-.b .block-content__header { background: #1e88e5; }
-.y .block-content__header { background: #fdd835; }
+/* colors */
+.r { background:#f44336; }
+.b { background:#1e88e5; }
+.y { background:#fdd835; }
+.o { background:#ff6f00; }
 
 .actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:10px;
 }
 
 .actions .right {
-  margin-left: auto;
+  margin-left:auto;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="block-wrap">
-
   <div class="project-title">Project</div>
 
-    <div class="block-col">
-      <div class="block r">
-        <div class="block-content">
-          <div class="block-content__header">
-            <h2 class="block-content__header__text">3D Space Shooter Game</h2>
-          </div>
-          <p class="block-content__body">
-HTML • CSS • JavaScript • Canvas — Interactive space shooter game featuring dynamic enemy waves, smooth player controls, real-time scoring, and immersive visual effects.
-          </p>
-          <div class="actions">
-            <div class="block-content__button back-btn">Back</div>
-            <a href="https://689486cd1339dc6fa0a6b044--super-malasada-1af979.netlify.app/" target="_blank" rel="noopener noreferrer" class="block-content__button right">Live Demo</a>
-          </div>
+  <div class="block-col">
+    <div class="block r">
+      <div class="block-content">
+        <div class="block-content__header">
+          <h2 class="block-content__header__text">3D Space Shooter Game</h2>
+        </div>
+        <p class="block-content__body">
+HTML • CSS • JavaScript • Canvas — Interactive space shooter game.
+        </p>
+        <div class="actions">
+          <div class="block-content__button back-btn">Back</div>
+          <a href="https://689486cd1339dc6fa0a6b044--super-malasada-1af979.netlify.app/" class="block-content__button right">Live Demo</a>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="block-col">
-      <div class="block b">
-        <div class="block-content">
-          <div class="block-content__header">
-            <h2 class="block-content__header__text">Fares Card Game</h2>
-          </div>
-          <p class="block-content__body">
-HTML • CSS • JavaScript — Fast-paced interactive card game featuring smooth animations, dynamic gameplay logic, and responsive design for seamless play.
-          </p>
-          <div class="actions">
-            <div class="block-content__button back-btn">Back</div>
-            <a href="https://farrash.netlify.app" target="_blank" rel="noopener noreferrer" class="block-content__button right">Live Demo</a>
-          </div>
+  <div class="block-col">
+    <div class="block b">
+      <div class="block-content">
+        <div class="block-content__header">
+          <h2 class="block-content__header__text">Fares Card Game</h2>
+        </div>
+        <p class="block-content__body">
+HTML • CSS • JavaScript — Card game.
+        </p>
+        <div class="actions">
+          <div class="block-content__button back-btn">Back</div>
+          <a href="https://farrash.netlify.app" class="block-content__button right">Live Demo</a>
         </div>
       </div>
     </div>
+  </div>
 
   <div class="block-col">
     <div class="block y">
       <div class="block-content">
         <div class="block-content__header">
-          <h2 class="block-content__header__text">Yellow</h2>
+          <h2 class="block-content__header__text">Previous Portfolio</h2>
         </div>
         <p class="block-content__body">
-          Yellow sits between orange and green.
+Portfolio evolution project.
         </p>
         <div class="actions">
           <div class="block-content__button back-btn">Back</div>
-          <div class="block-content__button right">Nice</div>
+          <a href="https://zidanweb2.netlify.app" class="block-content__button right">Live Demo</a>
         </div>
       </div>
     </div>
@@ -271,14 +269,14 @@ HTML • CSS • JavaScript — Fast-paced interactive card game featuring smoot
     <div class="block o">
       <div class="block-content">
         <div class="block-content__header">
-          <h2 class="block-content__header__text">Orange</h2>
+          <h2 class="block-content__header__text">First Hosted Website</h2>
         </div>
         <p class="block-content__body">
-          Orange is a bright, energetic color between red and yellow.
+First deployment project.
         </p>
         <div class="actions">
           <div class="block-content__button back-btn">Back</div>
-          <div class="block-content__button right">Awesome</div>
+          <a href="https://zidanweb1.netlify.app" class="block-content__button right">Live Demo</a>
         </div>
       </div>
     </div>
@@ -287,69 +285,20 @@ HTML • CSS • JavaScript — Fast-paced interactive card game featuring smoot
 </div>
 
 <script>
-const ACTIVE_CLASS = "block--active";
-const TRANSITION_CLASS = "block--transition";
+const ACTIVE_CLASS="block--active";
 
-const getTransforms = (a, b) => {
-  const scaleY = a.height / b.height;
-  const scaleX = a.width / b.width;
-
-  const translateX = a.left + a.width / 2 - (b.left + b.width / 2);
-  const translateY = a.top + a.height / 2 - (b.top + b.height / 2);
-
-  const rotate = translateX;
-
-  return `
-    translateX(${translateX}px)
-    translateY(${translateY}px)
-    rotate(${rotate}deg)
-    scaleY(${scaleY})
-    scaleX(${scaleX})
-  `;
-};
-
-const animate = (block, transforms, oldTransforms) => {
-  block.style.transform = transforms;
-  block.getBoundingClientRect();
-  block.classList.add(TRANSITION_CLASS);
-  block.style.transform = oldTransforms;
-
-  block.addEventListener("transitionend", () => {
-    block.removeAttribute("style");
-  }, { once: true });
-};
-
-document.querySelectorAll(".block").forEach(block => {
-  const button = block.querySelector(".block-content__button");
-
-  block.addEventListener("click", e => {
-
-    if (
-      block.classList.contains(ACTIVE_CLASS) &&
-      e.target !== button
-    ) return;
-
-    block.classList.remove(TRANSITION_CLASS);
-
-    const inactive = block.getBoundingClientRect();
-    const old = block.style.transform;
-
-    block.classList.toggle(ACTIVE_CLASS);
-
-    const active = block.getBoundingClientRect();
-    const transforms = getTransforms(inactive, active);
-
-    animate(block, transforms, old);
-  });
+document.querySelectorAll(".block").forEach(block=>{
+block.addEventListener("click",e=>{
+if(block.classList.contains(ACTIVE_CLASS)&&e.target.closest(".block-content__button"))return;
+block.classList.toggle(ACTIVE_CLASS);
 });
-document.querySelectorAll(".back-btn").forEach(btn => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const active = document.querySelector(".block.block--active");
-    if (active) {
-      active.classList.remove("block--active");
-    }
-  });
+});
+
+document.querySelectorAll(".back-btn").forEach(btn=>{
+btn.addEventListener("click",e=>{
+e.stopPropagation();
+document.querySelector(".block.block--active")?.classList.remove("block--active");
+});
 });
 </script>
 
